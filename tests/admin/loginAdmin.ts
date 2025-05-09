@@ -25,7 +25,7 @@ export const loginAdmin = async (page: Page, context: BrowserContext) => {
     await page.waitForTimeout(3000); 
     const token = await page.evaluate(() => localStorage.getItem('token')) ?? '';
     const cookies = await context.cookies();
-    fs.writeFileSync(sessionCookiesPath, JSON.stringify({sessionCookies: cookies, token}), 'utf-8');
+    fs.writeFileSync(sessionCookiesPath, JSON.stringify({cookies, token}), 'utf-8');
   }
 }
 
