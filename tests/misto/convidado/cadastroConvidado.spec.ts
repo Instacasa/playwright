@@ -1,11 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { deleteLogin, loginAdmin } from '../../admin/loginAdmin';
 import { deleteUsuario } from '../../../src/api/deleteUsuario';
-import { envConfig } from '../../../playwright.config';
 import { loginPlataforma } from '../../plataforma/loginPlataforma';
 
 
-const variables = envConfig.variables;
 test.describe('Cadastro de convidado', () => {
   let token;
 
