@@ -1,21 +1,28 @@
 import { test, expect } from '@playwright/test';
-
-import config from "../../../src/config";
-import { loginAdmin } from '../../admin/loginAdmin';
+import { deleteLogin, loginAdmin } from '../../admin/loginAdmin';
 import { deleteUsuario } from '../../../src/api/deleteUsuario';
+import { envConfig } from '../../../playwright.config';
 
 
-const variables = config.getVariables();
+const variables = envConfig.variables;
 test.describe('Cadastro de convidado', () => {
-  test.beforeEach(async ({ page }) => {
-    await loginAdmin(page, variables.adminURL);
-    await page.waitForTimeout(3000); 
-    const token = await page.evaluate(() => localStorage.getItem('token')) ?? '';
+  let token;
+
+  test.beforeEach(async ({ page, context }) => {
+    await loginAdmin(page, context);
+    token = await page.evaluate(() => localStorage.getItem('token')) ?? '';
     await deleteUsuario('devops+e2econvidado@instacasa.com.br', token);
   });
-  test('test', async ({ page, context }) => {
-  //   test.setTimeout(120_000)
 
+  test.afterEach(async ({ page }) => {
+    await deleteUsuario('devops+e2econvidado@instacasa.com.br', token);
+  });
+
+  test.afterAll(async () => {
+    await deleteLogin();
+  });
+
+  test('test', async ({ page, context }) => {
     await page.getByRole('menuitem', { name: 'Usuários' }).click();
     await page.getByRole('button', { name: 'Novo usuário' }).click();
     await page.getByText('Convidado').click();
