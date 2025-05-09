@@ -1,18 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 import path from 'path';
-import config from './src/config';
 import dotenv from 'dotenv';
+import Config from './src/config';
 
-// Read from ".env" file.
-dotenv.config({ path: path.resolve(__dirname, '.env') });
+const envs = dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+export const envConfig = Config.getInstance(envs.parsed);
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -36,8 +29,6 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
-    ADMIN_URL: process.env.ADMIN_URL,
-    PLATAFORMA_URL: process.env.PLATAFORMA_URL,
     permissions: ['clipboard-read', 'clipboard-write'],
   },
 
