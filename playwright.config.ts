@@ -4,7 +4,7 @@ import config from './src/config';
 import dotenv from 'dotenv';
 
 // Read from ".env" file.
-dotenv.config({ path: path.resolve(__dirname, '.env') });
+const envs = dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 /**
  * Read environment variables from file.
@@ -36,9 +36,8 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
-    ADMIN_URL: process.env.ADMIN_URL,
-    PLATAFORMA_URL: process.env.PLATAFORMA_URL,
     permissions: ['clipboard-read', 'clipboard-write'],
+    ...envs.parsed,
   },
 
   /* Configure projects for major browsers */
