@@ -8,8 +8,10 @@ interface TEnvVariables {
   adminUrl: TEnvUrl,
   apiUrl: TEnvUrl,
   auth0M2MClientId?: string,
-  adminUser: TEnvEmail,
-  adminPassword: string,
+  admin: {
+    email: TEnvEmail,
+    password: string,
+  },
 }
 
 export interface TConfig {
@@ -28,8 +30,10 @@ export default class Config implements TConfig {
       plataformaUrl: this.setEnvUrl('plataformaUrl'),
       adminUrl: this.setEnvUrl('adminUrl'),
       apiUrl: this.setEnvUrl('apiUrl'),
-      adminUser: this.setEnvEmail('adminUser'),
-      adminPassword: this.setEnv('adminPassword'),
+      admin: {
+        email: this.setEnvEmail('adminUser'),
+        password: this.setEnv('adminPassword'),
+      },
       // Exemplo de variável não obrigatória
       auth0M2MClientId: envs.AUTH0_M2M_CLIENT_ID,
     };
@@ -40,7 +44,7 @@ export default class Config implements TConfig {
     return this.setEnv(
       variable,
       `Váriavel de ambiente ${envName}, do tipo URL, inválida ou não definida!`,
-      /^[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+-~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)?/,
+      /^[(http(s)?):\\\\(www\\.)?a-zA-Z0-9@:%._\\+-~#=]{2,256}(\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\\+.~#?&=]*)?|:[0-9]{4})\//,
     ) as TEnvUrl;
   };
 

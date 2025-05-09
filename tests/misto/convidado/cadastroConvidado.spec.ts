@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { deleteLogin, loginAdmin } from '../../admin/loginAdmin';
 import { deleteUsuario } from '../../../src/api/deleteUsuario';
 import { envConfig } from '../../../playwright.config';
+import { loginPlataforma } from '../../plataforma/loginPlataforma';
 
 
 const variables = envConfig.variables;
@@ -26,7 +27,11 @@ test.describe('Cadastro de convidado', () => {
     await deleteLogin();
   });
 
-  test('Pré cadastro e cadastro de convidado', async ({ page }) => {
+  test('Pré cadastro e cadastro de convidado', async ({ page, context }) => {
+    const userE2EConvidado = {
+      email: 'devops+e2econvidado@instacasa.com.br',
+      password: '@Convidado123!'
+    };
     // Pré Cadastro
     await page.getByRole('menuitem', { name: 'Usuários' }).click();
     await page.getByRole('button', { name: 'Novo usuário' }).click();
@@ -38,7 +43,7 @@ test.describe('Cadastro de convidado', () => {
     await page.getByRole('textbox', { name: 'Telefone' }).click();
     await page.getByRole('textbox', { name: 'Telefone' }).fill('(11)11111-11111');
     await page.getByRole('textbox', { name: 'E-mail' }).click();
-    await page.getByRole('textbox', { name: 'E-mail' }).fill('devops+e2econvidado@instacasa.com.br');
+    await page.getByRole('textbox', { name: 'E-mail' }).fill(userE2EConvidado.email);
     await page.getByRole('button', { name: 'Salvar' }).click();
 
     await page.getByRole('button', { name: 'Copiar código' }).click();
@@ -62,9 +67,9 @@ test.describe('Cadastro de convidado', () => {
     await page.getByRole('button', { name: 'Próximo' }).click();
     await page.getByRole('button', { name: 'Próximo' }).click();
     await page.getByRole('textbox', { name: 'Senha *', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Senha *', exact: true }).fill('@Convidado123!');
+    await page.getByRole('textbox', { name: 'Senha *', exact: true }).fill(userE2EConvidado.password);
     await page.getByRole('textbox', { name: 'Confirmar senha *', exact: true }).click();
-    await page.getByRole('textbox', { name: 'Confirmar senha *', exact: true }).fill('@Convidado123!');
+    await page.getByRole('textbox', { name: 'Confirmar senha *', exact: true }).fill(userE2EConvidado.password);
     await page.getByRole('button', { name: 'Próximo' }).click();
     await page.getByText('Para prosseguir é necessário').isVisible();
     await page.getByText('Aceito os termos de uso e pol').click();
@@ -76,28 +81,22 @@ test.describe('Cadastro de convidado', () => {
     await page.locator('input[name="profundidade"]').click();
     await page.locator('input[name="profundidade"]').fill('25');
     await page.getByRole('button', { name: 'Próximo' }).click();
-    await page.locator('input[name="cep"]').click();
-    await page.locator('input[name="cep"]').fill('03035000');
-    await page.locator('input[name="cep"]').press('Tab');
-    await page.locator('label').filter({hasText: 'Número', hasNotText: 'Sem'}).filter({visible: true}).click();
-    await page.locator('label').filter({hasText: 'Número', hasNotText: 'Sem'}).filter({visible: true}).fill('123');
+    await page.getByRole('textbox', { name: 'Bairro *' }).click();
+    await page.getByRole('textbox', { name: 'Bairro *' }).fill('Bairro');
+    await page.getByLabel('Estado *').selectOption('MS');
+    await page.getByRole('textbox', { name: 'Cidade *' }).click();
+    await page.getByRole('textbox', { name: 'Cidade *' }).fill('Cidade');
     await page.getByRole('button', { name: 'Próximo' }).click();
     await page.locator('div').filter({ hasText: /^PlanoTerreno nivelado em relação a rua, sem inclinação$/ }).first().click();
     await page.getByRole('button', { name: 'Finalizar' }).click();
     await page.getByRole('button', { name: 'Acessar Plataforma' }).click();
 
     // Login
-    await page.getByRole('textbox', { name: 'E-mail *' }).click();
-    await page.getByRole('textbox', { name: 'E-mail *' }).fill('devops+e2econvidado@instacasa.com.br');
-    await page.getByRole('textbox', { name: 'Senha *' }).click();
-    await page.getByRole('textbox', { name: 'Senha *' }).fill('@Convidado123!');
-    await page.getByRole('button', { name: 'Entrar', exact: true }).click();
-    // Autorização Auth0
-    await page.getByRole('button', { name: 'Aceitar' }).click();
-    const page1Promise = page.waitForEvent('popup');
+    await loginPlataforma(page,context, userE2EConvidado)
     
     // Pedido
-    await page.getByRole('link', { name: /\d{5} (Sobrado|Casa Térrea) favoritar/ }).first().click();
+    const page1Promise = page.waitForEvent('popup');
+    await page.getByRole('link', { name: '00680 Sobrado favoritar' }).click();
     const page1 = await page1Promise;
     await page1.getByRole('button', { name: 'Solicitar projeto arquitetô' }).click();
     await page1.getByRole('button', { name: 'Prosseguir' }).click();
