@@ -26,6 +26,7 @@ test.describe('Cadastro de convidado', () => {
     await deleteLogin();
   });
 
+
   test('Pré cadastro e cadastro de convidado', async ({ page }) => {
     // Pré Cadastro
     await page.getByRole('menuitem', { name: 'Usuários' }).click();
