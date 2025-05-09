@@ -7,7 +7,7 @@ export const deleteUsuario = async (email: string, token?: string) => {
 
   const variables = envConfig.variables;
   const headers = {
-    authorization: `Bearer ${token ?? variables.auth0M2MClientId ?? ''}`,
+    authorization: token ? `Bearer ${token}` : (variables.auth0M2MClientId ?? ''),
     "Content-Type": "application/json",
   };
   const data = [email]

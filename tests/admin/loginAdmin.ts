@@ -9,8 +9,10 @@ export const loginAdmin = async (page: Page, context: BrowserContext) => {
   const sessionCookiesPath = `playwright/.auth/${variables.admin.email}.json`;
   if (fs.existsSync(sessionCookiesPath)) {
     // Restaura sessão
-    const sessionCookies = JSON.parse(fs.readFileSync(sessionCookiesPath, 'utf-8'));
-    await context.addCookies(sessionCookies);
+    const session = JSON.parse(fs.readFileSync(sessionCookiesPath, 'utf-8'));
+    await context.addCookies(session.cookies);
+    await page.evaluate(() => localStorage.setItem('token', session.token));
+
     await page.goto(variables.adminUrl);
   } else {
     await page.goto(variables.adminUrl);
@@ -21,8 +23,9 @@ export const loginAdmin = async (page: Page, context: BrowserContext) => {
     await page.getByRole('button', { name: 'Entrar', exact: true }).click();
 
     await page.waitForTimeout(3000); 
-    const sessionCookies = await context.cookies();
-    fs.writeFileSync(sessionCookiesPath, JSON.stringify(sessionCookies), 'utf-8');
+    const token = await page.evaluate(() => localStorage.getItem('token')) ?? '';
+    const cookies = await context.cookies();
+    fs.writeFileSync(sessionCookiesPath, JSON.stringify({sessionCookies: cookies, token}), 'utf-8');
   }
 }
 
