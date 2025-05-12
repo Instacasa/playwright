@@ -6,6 +6,10 @@ import { loginPlataforma } from '../../plataforma/loginPlataforma';
 
 test.describe('Cadastro de convidado', () => {
   let token;
+  const userE2EConvidado = {
+    email: 'g_testes+e2econvidado@instacasa.com.br',
+    password: '@Convidado123!'
+  };
 
   test.beforeAll(async () => {
     await deleteLogin();
@@ -14,11 +18,11 @@ test.describe('Cadastro de convidado', () => {
   test.beforeEach(async ({ page, context }) => {
     await loginAdmin(page, context);
     token = await page.evaluate(() => localStorage.getItem('token')) ?? '';
-    await deleteUsuario('devops+e2econvidado@instacasa.com.br', token);
+    await deleteUsuario(userE2EConvidado.email, token);
   });
 
   test.afterEach(async ({ page }) => {
-    await deleteUsuario('devops+e2econvidado@instacasa.com.br', token);
+    await deleteUsuario(userE2EConvidado.email, token);
   });
 
   test.afterAll(async () => {
@@ -26,10 +30,6 @@ test.describe('Cadastro de convidado', () => {
   });
 
   test('Pré cadastro e cadastro de convidado', async ({ page, context }) => {
-    const userE2EConvidado = {
-      email: 'devops+e2econvidado@instacasa.com.br',
-      password: '@Convidado123!'
-    };
     // Pré Cadastro
     await page.getByRole('menuitem', { name: 'Usuários' }).click();
     await page.getByRole('button', { name: 'Novo usuário' }).click();

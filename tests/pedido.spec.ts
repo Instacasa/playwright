@@ -1,6 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 test('test', async ({ page }) => {
+  const userE2EProprietario = {
+    email: 'g_testes+e2eproprietario@instacasa.com.br',
+    password: '@Proprietario123!'
+  };
+
   await page.goto('https://hml-site.instacasa.com.br/');
   await page.getByRole('link', { name: 'Criar Conta' }).click();
   await expect(page.locator('body')).toContainText('Proprietário com código InstaCasa');
@@ -19,7 +24,7 @@ test('test', async ({ page }) => {
   await page.locator('input[name="telefone"]').click();
   await page.locator('input[name="telefone"]').fill('(84)99168-2967');
   await page.locator('input[name="email"]').click();
-  await page.locator('input[name="email"]').fill('waldney.andrade+testecypress3@instacasa.com.br');
+  await page.locator('input[name="email"]').fill(userE2EProprietario.email);
   await page.getByRole('button', { name: 'Avançar' }).click();
   await page.locator('input[name="cep"]').click();
   await page.locator('input[name="cep"]').fill('59056400');
@@ -31,17 +36,17 @@ test('test', async ({ page }) => {
   await page.locator('input[name="complemento"]').fill('ap 202');
   await page.getByRole('button', { name: 'Avançar' }).click();
   await page.getByRole('textbox', { name: 'Digite sua senha', exact: true }).click();
-  await page.getByRole('textbox', { name: 'Digite sua senha', exact: true }).fill('@Abcdef9');
+  await page.getByRole('textbox', { name: 'Digite sua senha', exact: true }).fill(userE2EProprietario.email);
   await page.locator('div').filter({ hasText: /^Senha \*$/ }).getByRole('img').click();
-  await expect(page.getByRole('textbox', { name: 'Digite sua senha', exact: true })).toHaveValue('@Abcdef9');
+  await expect(page.getByRole('textbox', { name: 'Digite sua senha', exact: true })).toHaveValue(userE2EProprietario.email);
   await page.getByRole('textbox', { name: 'Digite sua senha novamente' }).click();
-  await page.getByRole('textbox', { name: 'Digite sua senha novamente' }).fill('@Abcdef9');
+  await page.getByRole('textbox', { name: 'Digite sua senha novamente' }).fill(userE2EProprietario.email);
   await page.locator('label').filter({ hasText: 'Aceito os termos de uso e pol' }).locator('div').nth(1).click();
   await page.getByRole('button', { name: 'Finalizar' }).click();
   await page.getByRole('textbox', { name: 'E-mail *' }).click();
-  await page.getByRole('textbox', { name: 'E-mail *' }).fill('waldney.andrade+testecypress3@instacasa.com.br');
+  await page.getByRole('textbox', { name: 'E-mail *' }).fill(userE2EProprietario.email);
   await page.getByRole('textbox', { name: 'E-mail *' }).press('Tab');
-  await page.getByRole('textbox', { name: 'Senha *' }).fill('@Abcdef9');
+  await page.getByRole('textbox', { name: 'Senha *' }).fill(userE2EProprietario.email);
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
   await page.getByRole('button', { name: 'Aceitar' }).click();
   await expect(page.getByRole('heading')).toContainText('Bem vindo à InstaCasa');
