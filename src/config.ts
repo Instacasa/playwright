@@ -44,7 +44,7 @@ export default class Config implements TConfig {
     return this.setEnv(
       variable,
       `Váriavel de ambiente ${envName}, do tipo URL, inválida ou não definida!`,
-      /^[(http(s)?):\\\\(www\\.)?a-zA-Z0-9@:%._\\+-~#=]{2,256}(\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\\+.~#?&=]*)?|:[0-9]{4})\//,
+      /^[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+-~#=]{2,256}(\.[a-z]{2,6}|\:[0-9]{4})\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)?/,
     ) as TEnvUrl;
   };
 

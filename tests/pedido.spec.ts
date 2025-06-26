@@ -1,12 +1,27 @@
 import { test, expect } from '@playwright/test';
+import { envConfig } from '../playwright.config';
+import { deleteUsuario } from '../src/api/deleteUsuario';
+import { deleteLogin, loginAdmin } from './admin/loginAdmin';
 
-test('test', async ({ page }) => {
+test.describe('Cadastrar proprietário e pedido de projeto', () => {
+  let token;
+  const variables = envConfig.variables;
   const userE2EProprietario = {
     email: 'g_testes+e2eproprietario@instacasa.com.br',
     password: '@Proprietario123!'
   };
 
-  await page.goto('https://hml-site.instacasa.com.br/');
+  test.beforeEach(async ({ page, context }) => {
+    await deleteUsuario(userE2EProprietario.email, token);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await deleteUsuario(userE2EProprietario.email, token);
+  });
+
+test('test', async ({ page }) => {
+
+  await page.goto(variables.plataformaUrl);
   await page.getByRole('link', { name: 'Criar Conta' }).click();
   await expect(page.locator('body')).toContainText('Proprietário com código InstaCasa');
   await page.getByText('Cadastro para proprietários').click();
@@ -35,18 +50,19 @@ test('test', async ({ page }) => {
   await page.locator('input[name="complemento"]').click();
   await page.locator('input[name="complemento"]').fill('ap 202');
   await page.getByRole('button', { name: 'Avançar' }).click();
-  await page.getByRole('textbox', { name: 'Digite sua senha', exact: true }).click();
-  await page.getByRole('textbox', { name: 'Digite sua senha', exact: true }).fill(userE2EProprietario.email);
+  await page.locator('input[name="password"]').click();
+  await page.locator('input[name="password"]').fill(userE2EProprietario.password);
   await page.locator('div').filter({ hasText: /^Senha \*$/ }).getByRole('img').click();
-  await expect(page.getByRole('textbox', { name: 'Digite sua senha', exact: true })).toHaveValue(userE2EProprietario.email);
-  await page.getByRole('textbox', { name: 'Digite sua senha novamente' }).click();
-  await page.getByRole('textbox', { name: 'Digite sua senha novamente' }).fill(userE2EProprietario.email);
+  await expect(page.locator('input[name="password"]')).toHaveValue(userE2EProprietario.password);
+  await page.locator('input[name="confirmarSenha"]').click();
+  await page.locator('input[name="confirmarSenha"]').fill(userE2EProprietario.password);
   await page.locator('label').filter({ hasText: 'Aceito os termos de uso e pol' }).locator('div').nth(1).click();
   await page.getByRole('button', { name: 'Finalizar' }).click();
   await page.getByRole('textbox', { name: 'E-mail *' }).click();
   await page.getByRole('textbox', { name: 'E-mail *' }).fill(userE2EProprietario.email);
   await page.getByRole('textbox', { name: 'E-mail *' }).press('Tab');
-  await page.getByRole('textbox', { name: 'Senha *' }).fill(userE2EProprietario.email);
+  await page.getByRole('textbox', { name: 'Senha *' }).fill(userE2EProprietario.password);
+  await page.waitForTimeout(1000);
   await page.getByRole('button', { name: 'Entrar', exact: true }).click();
   await page.getByRole('button', { name: 'Aceitar' }).click();
   await expect(page.getByRole('heading')).toContainText('Bem vindo à InstaCasa');
@@ -73,4 +89,6 @@ test('test', async ({ page }) => {
   await page1.getByRole('button', { name: 'Confirmar e finalizar' }).click();
   await expect(page1.getByRole('heading')).toContainText('Meu Projeto');
   await page1.getByRole('link', { name: 'Ver detalhes' }).click();
+});
+
 });
